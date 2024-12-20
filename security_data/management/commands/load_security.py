@@ -19,6 +19,7 @@ class Command(BaseCommand):
         with open(file_path, mode='r', encoding='utf-8') as csv_file:
             reader = csv.DictReader(csv_file, delimiter=';')
             progress = 0
+            total_rows = sum(1 for _ in csv_file) - 1
 
             # Loop through each row in the CSV
             for row in reader:
@@ -36,7 +37,7 @@ class Command(BaseCommand):
                 # Now create the Securite instance for this row
                 Securite.objects.create(
                     commune=commune,
-                    year=row.get("annee", ""),
+                    year=f"20{row.get("annee", "")}",
                     agression_class=row.get("classe", ""),
                     aggression_unity=row.get("unité.de.compte", ""),
                     public_value=row.get("valeur.publiée", ""),
@@ -53,7 +54,7 @@ class Command(BaseCommand):
 
                 # Print progress every 1000 records
                 if progress % 1000 == 0:
-                    self.stdout.write(self.style.NOTICE(f'Progress: {progress} lines processed'))
+                    self.stdout.write(self.style.NOTICE(f'Progress: {progress} / {total_rows}'))
 
             # Output success message after loading the data
             self.stdout.write(self.style.SUCCESS(f'CSV data successfully loaded into Securite model. {progress} rows processed.'))
