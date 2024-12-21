@@ -17,10 +17,11 @@ class Command(BaseCommand):
         
         # Open and parse the CSV file
         with open(file_path, mode='r', encoding='utf-8') as csv_file:
-            reader = csv.DictReader(csv_file, delimiter=';')
             progress = 0
             total_rows = sum(1 for _ in csv_file) - 1
-
+            # Reset the file pointer to the start
+            csv_file.seek(0) 
+            reader = csv.DictReader(csv_file, delimiter=';')
             # Loop through each row in the CSV
             for row in reader:
                 # Extract Commune based on CODGEO_2024
@@ -43,18 +44,18 @@ class Command(BaseCommand):
                     public_value=row.get("valeur.publiée", ""),
                     facts_value=row.get("faits", ""),
                     per_thousand=row.get("tauxpourmille", ""),
-                    complementinfoval=row.get("complementinfoval", ""),
-                    complementinfotaux=row.get("complementinfotaux", ""),
+                    # complementinfoval=row.get("complementinfoval", ""),
+                    # complementinfotaux=row.get("complementinfotaux", ""),
                     pop=row.get("POP", ""),
                     millpop=row.get("millPOP", ""),
-                    log=row.get("LOG", ""),
-                    milllog=row.get("millLOG", ""),
+                    # log=row.get("LOG", ""),
+                    # milllog=row.get("millLOG", ""),
                 )
                 progress += 1
 
                 # Print progress every 1000 records
                 if progress % 1000 == 0:
-                    self.stdout.write(self.style.NOTICE(f'Progress: {progress} / {total_rows}'))
+                    self.stdout.write(self.style.NOTICE(f'Progress: {progress} / {total_rows} : {progress / total_rows * 100}%'))
 
             # Output success message after loading the data
             self.stdout.write(self.style.SUCCESS(f'CSV data successfully loaded into Securite model. {progress} rows processed.'))

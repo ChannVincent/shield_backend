@@ -17,9 +17,11 @@ class Command(BaseCommand):
         
         # Open and parse the CSV file
         with open(file_path, mode='r', encoding='utf-8') as csv_file:
-            reader = csv.DictReader(csv_file)
             progress = 0
             total_rows = sum(1 for _ in csv_file) - 1
+            # Reset the file pointer to the start
+            csv_file.seek(0) 
+            reader = csv.DictReader(csv_file)
             # Loop through each row in the CSV
             for row in reader:
                 if row["TYPECOM"] != "COM":
@@ -37,7 +39,7 @@ class Command(BaseCommand):
                 )
                 progress += 1
                 if progress % 1000 == 0:
-                    self.stdout.write(self.style.NOTICE(f'progress: {progress} / {total_rows}'))
+                    self.stdout.write(self.style.NOTICE(f'progress: {progress} / {total_rows} : {progress / total_rows * 100}%'))
 
             # Output success message after loading the data
             self.stdout.write(self.style.SUCCESS('CSV data successfully loaded into Commune model'))

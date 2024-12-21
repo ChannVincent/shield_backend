@@ -21,12 +21,12 @@ class Securite(models.Model):
     public_value = models.CharField(max_length=20) # valeur.publiée
     facts_value = models.CharField(max_length=20) # faits
     per_thousand = models.CharField(max_length=20) # tauxpourmille
-    complementinfoval = models.CharField(max_length=20) # complementinfoval
-    complementinfotaux = models.CharField(max_length=20) # complementinfotaux
+    # complementinfoval = models.CharField(max_length=20) # complementinfoval
+    # complementinfotaux = models.CharField(max_length=20) # complementinfotaux
     pop = models.CharField(max_length=20) # POP
     millpop = models.CharField(max_length=20) # millPOP
-    log = models.CharField(max_length=20) # LOG
-    milllog = models.CharField(max_length=20) # millLOG
+    # log = models.CharField(max_length=20) # LOG
+    # milllog = models.CharField(max_length=20) # millLOG
 
     def __str__(self):
         return f"{self.commune.name_full} (20{self.year}) : {self.agression_class}"
