@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(Commune)
 
 
 class SearchableFilter(admin.SimpleListFilter):
@@ -88,4 +87,10 @@ class YearFilter(SearchableFilter):
 @admin.register(Securite)
 class SecuriteAdmin(admin.ModelAdmin):
     list_display = ('commune', 'year', 'agression_class', 'facts_value', 'aggression_unity')
+    search_fields = ('commune__name_full',)
     list_filter = (DepartmentFilter, CommuneFilter, YearFilter, AggressionClassFilter)
+
+
+@admin.register(Commune)
+class CommuneAdmin(admin.ModelAdmin):
+    search_fields = ('name_full',)
