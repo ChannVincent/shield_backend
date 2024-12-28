@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Define the path to the CSV file in the assets folder
-        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'delinquance_par_commune_2024.csv')
+        file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'delinquance_par_commune.csv')
 
         # Ensure the file exists before attempting to read it
         if not os.path.exists(file_path):
@@ -26,6 +26,9 @@ class Command(BaseCommand):
             for row in reader:
                 # Extract Commune based on CODGEO_2024
                 code_commune = row["CODGEO_2024"]
+                # don't do each rows (many hours to parse)
+                if code_commune not in ["77058", "77059", "71540", "77479"]:
+                    continue
 
                 try:
                     # Fetch the Commune (do not create if not found)
