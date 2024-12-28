@@ -2,6 +2,7 @@ import csv
 import os
 from django.core.management.base import BaseCommand
 from ...models import Commune
+from security_data.communes_filter import data_commune_filter
 
 class Command(BaseCommand):
     help = 'Parse CSV data from file in the assets folder and load into the Commune model'
@@ -24,7 +25,7 @@ class Command(BaseCommand):
             reader = csv.DictReader(csv_file)
             # Loop through each row in the CSV
             for row in reader:
-                if row["TYPECOM"] != "COM":
+                if row["TYPECOM"] != "COM" or row["COM"] not in data_commune_filter:
                     continue  # Skip rows where TYPECOM is not "COM"
 
                 # Create a new Commune instance with data from the row

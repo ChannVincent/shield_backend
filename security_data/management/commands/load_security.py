@@ -2,6 +2,7 @@ import csv
 import os
 from django.core.management.base import BaseCommand
 from ...models import Commune, Securite
+from security_data.communes_filter import data_commune_filter
 
 class Command(BaseCommand):
     help = 'Parse CSV data from file in the assets folder and load into the Commune and Securite models'
@@ -27,7 +28,7 @@ class Command(BaseCommand):
                 # Extract Commune based on CODGEO_2024
                 code_commune = row["CODGEO_2024"]
                 # don't do each rows (many hours to parse)
-                if code_commune not in ["77058", "77059", "71540", "77479"]:
+                if code_commune not in data_commune_filter:
                     continue
 
                 try:
