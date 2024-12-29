@@ -11,10 +11,12 @@ def get_all_posts(request):
     if not commune_id:
         return JsonResponse({'error': 'commune_id is required'}, status=400)
     try:
-        posts = Post.objects.filter(commune_id=commune_id).values()  # Filter posts by commune_id
+        # Filter posts by commune_id and order by ID in descending order
+        posts = Post.objects.filter(commune_id=commune_id).order_by('-id').values()
         return JsonResponse(list(posts), safe=False)  # Convert to JSON and return
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
     
 
 # View to create a new post : http://localhost:8000/posts/create
