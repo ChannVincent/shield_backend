@@ -23,17 +23,26 @@ def get_all_posts(request):
 @require_http_methods(["POST"])
 def create_post(request):
     try:
-        image = request.FILES.get('image')
-        data = json.loads(request.body.decode('utf-8'))
+        # Ensure the request is multipart/form-data
+        commune_id = request.POST.get('commune')
+        title = request.POST.get('title')
+        text = request.POST.get('text')
+        json_data = request.POST.get('json_data')  # JSON as a string
+        image = request.FILES.get('image')  # Handle the uploaded image
+
+        # Create the post
         new_post = Post.objects.create(
-            commune_id=data.get('commune'),  # Assumes the commune ID is provided
-            title=data.get('title'),
-            text=data.get('text'),
-            json_data=data.get('json_data'),
-            image=image,
+            commune_id=commune_id,
+            title=title,
+            text=text,
+            json_data=json_data,
+            image=image
         )
+
+        # Respond with success
         return JsonResponse({'message': 'Post created successfully', 'post_id': new_post.id}, status=201)
     except Exception as e:
+        # Handle errors
         return JsonResponse({'error': str(e)}, status=400)
 
 
