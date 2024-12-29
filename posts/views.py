@@ -32,3 +32,8 @@ def create_post(request):
         return JsonResponse({'message': 'Post created successfully', 'post_id': new_post.id}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+
+# create automatic post from security data
+def auto_post(commune_id):
+    pass
