@@ -55,39 +55,38 @@ def auto_post(commune_id):
     if saved_posts_count > 0:
         return
     
-    # 1st class: Usage de stupéfiants
-    posts = []
-    aggression_class = "Usage de stupéfiants"
-    commune = Commune.objects.get(pk=commune_id)
-    title = aggression_class + " à " + commune.name_full
-    securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
-    
-    # Convert to simplified JSON format
-    simplified_securite_data = [
-        {
-            "commune": record.commune.pk,
-            "year": record.year,
-            "agression_class": record.agression_class,
-            "aggression_unity": record.aggression_unity,
-            "public_value": record.public_value,
-            "facts_value": record.facts_value,
-            "per_thousand": record.per_thousand,
-            "pop": record.pop,
-            "millpop": record.millpop,
-        }
-        for record in securite_records
+    aggression_class_list = [
+        "Usage de stupéfiants", 
+        "Trafic de stupéfiants", 
+        "Destructions et dégradations volontaires", 
+        "Cambriolages de logement", 
+        "Violences sexuelles"
     ]
-    
-    # Convert to JSON
-    securite_json = json.dumps(simplified_securite_data)
-    
-    # Create a new post
-    new_post = Post.objects.create(
-        commune_id=commune_id,
-        title=title,
-        text=title,
-        json_data=securite_json,
-    )
-    
-    posts.append(new_post)
+    posts = []
+    for aggression_class in aggression_class_list:
+        commune = Commune.objects.get(pk=commune_id)
+        title = aggression_class + " à " + commune.name_full
+        securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
+        # Convert to simplified JSON format
+        simplified_securite_data = [
+            {
+                "commune": record.commune.pk,
+                "year": record.year,
+                "agression_class": record.agression_class,
+                "aggression_unity": record.aggression_unity,
+                "facts_value": "0" if record.facts_value == "NA" else record.facts_value,
+            }
+            for record in securite_records
+        ]
+        # Convert to JSON
+        securite_json = json.dumps(simplified_securite_data)
+        # Create a new post
+        new_post = Post.objects.create(
+            commune_id=commune_id,
+            title=title,
+            text=title,
+            json_data=securite_json,
+        )
+        posts.append(new_post)
+
     return posts
