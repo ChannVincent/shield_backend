@@ -56,14 +56,16 @@ def auto_post(commune_id):
         return
     
     aggression_class_list = [
-        "Usage de stupéfiants", 
-        "Trafic de stupéfiants", 
-        "Destructions et dégradations volontaires", 
-        "Cambriolages de logement", 
-        "Violences sexuelles"
+        ("Usage de stupéfiants", "#f80d09"), 
+        ("Trafic de stupéfiants", "#f80d09"),
+        ("Destructions et dégradations volontaires", "#000000"), 
+        ("Cambriolages de logement", "#000000"),
+        ("Violences sexuelles", "#cd09f8"),
     ]
     posts = []
-    for aggression_class in aggression_class_list:
+    for aggression in aggression_class_list:
+        aggression_class = aggression[0]
+        color = aggression[1]
         commune = Commune.objects.get(pk=commune_id)
         title = aggression_class + " à " + commune.name_full
         securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
@@ -86,6 +88,7 @@ def auto_post(commune_id):
             commune_id=commune_id,
             title=title,
             text=text,
+            color=color,
             json_data=securite_json,
         )
         posts.append(new_post)

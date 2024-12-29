@@ -6,5 +6,6 @@ class Post(models.Model):
     title = models.CharField(max_length=200, null=True, default=None, blank=True)
     text = models.TextField(null=True, default=None, blank=True)
     image = models.ImageField(null=True, default=None, blank=True)
+    color = models.CharField(max_length=50, null=True, default=None, blank=True)
     # video = video upload
     json_data = models.JSONField(null=True, default=None, blank=True)
