@@ -67,6 +67,7 @@ def auto_post(commune_id):
         commune = Commune.objects.get(pk=commune_id)
         title = aggression_class + " à " + commune.name_full
         securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
+        text = aggression_class + " - " + securite_records[0].aggression_unity
         # Convert to simplified JSON format
         simplified_securite_data = [
             {
@@ -84,7 +85,7 @@ def auto_post(commune_id):
         new_post = Post.objects.create(
             commune_id=commune_id,
             title=title,
-            text=title,
+            text=text,
             json_data=securite_json,
         )
         posts.append(new_post)
