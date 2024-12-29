@@ -78,6 +78,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173", # Alternative localhost address
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
