@@ -5,6 +5,7 @@ from .models import Post
 from security_data.models import *
 import json
 from django.core import serializers
+import wikipediaapi
 
 # View to get all posts by commune : http://localhost:8000/posts/?commune_id=0
 @require_http_methods(["GET"])
@@ -13,7 +14,8 @@ def get_all_posts(request):
     if not commune_id:
         return JsonResponse({'error': 'commune_id is required'}, status=400)
     try:
-        auto_post(commune_id=commune_id)
+        auto_post_general_info(commune_id=commune_id)
+        auto_post_security(commune_id=commune_id)
         posts = Post.objects.filter(commune_id=commune_id).order_by('-id').values()
         return JsonResponse(list(posts), safe=False) 
     except Exception as e:
@@ -50,7 +52,8 @@ def create_post(request):
 
 
 # create automatic post from security data
-def auto_post(commune_id):
+def auto_post_security(commune_id):
+    commune = Commune.objects.get(pk=commune_id)
     saved_posts_count = Post.objects.filter(commune_id=commune_id).count()
     if saved_posts_count > 0:
         return
@@ -66,7 +69,6 @@ def auto_post(commune_id):
     for aggression in aggression_class_list:
         aggression_class = aggression[0]
         color = aggression[1]
-        commune = Commune.objects.get(pk=commune_id)
         title = aggression_class + " à " + commune.name_full
         securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
         text = aggression_class + " - " + securite_records[0].aggression_unity
@@ -87,10 +89,77 @@ def auto_post(commune_id):
         new_post = Post.objects.create(
             commune_id=commune_id,
             title=title,
-            text=text,
+            text=None,
             color=color,
             json_data=securite_json,
+            type="security_charts"
         )
         posts.append(new_post)
 
     return posts
+
+
+def auto_post_general_info(commune_id):
+    commune = Commune.objects.get(pk=commune_id)
+    wiki_api = wikipediaapi.Wikipedia('shield (ad@min.com)', 'fr')
+    # if page wiki of full name commune doesn't exist : return
+    page_wiki = wiki_api.page(commune.name_full)
+    if not page_wiki.exists():
+        return
+    post_type_summary = "wiki_summary"
+    post_type_location = "wiki_location"
+    post_type_road = "wiki_road"
+    post_type_transport = "wiki_transport"
+    # post summary
+    post_summary = Post.objects.filter(commune_id=commune_id, type=post_type_summary).first()
+    if post_summary == None:
+        Post.objects.create(
+            commune_id=commune_id,
+            title=commune.name_full,
+            text=page_wiki.summary,
+            type=post_type_summary
+        )
+    # sections
+    for section in page_wiki.sections:
+        if section.title == "Géographie":
+            for sub_section in section.sections:
+                if sub_section.title == "Localisation":
+                    # post location
+                    post_location = Post.objects.filter(commune_id=commune_id, type=post_type_location).first()
+                    if post_location == None:
+                        Post.objects.create(
+                            commune_id=commune_id,
+                            title=sub_section.title,
+                            text=sub_section.text,
+                            type=post_type_location
+                        )
+
+        if section.title == "Urbanisme":
+            for sub_section in section.sections:
+                if sub_section.title == "Voies de communications et transports":
+                    for sub_sub_section in sub_section.sections:
+                        if sub_sub_section.title == "Voies routières":
+                            # post road
+                            post_road = Post.objects.filter(commune_id=commune_id, type=post_type_road).first()
+                            if post_road == None:
+                                Post.objects.create(
+                                    commune_id=commune_id,
+                                    title=sub_sub_section.title,
+                                    text=sub_sub_section.text,
+                                    type=post_type_road
+                                )
+                                
+                        if sub_sub_section.title == "Transports en commun":
+                            # post transport
+                            post_transport = Post.objects.filter(commune_id=commune_id, type=post_type_transport).first()
+                            if post_transport == None:
+                                Post.objects.create(
+                                    commune_id=commune_id,
+                                    title=sub_sub_section.title,
+                                    text=sub_sub_section.text,
+                                    type=post_type_transport
+                                )
+        
+        
+                
+
