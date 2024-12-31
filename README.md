@@ -11,4 +11,7 @@ $ python manage.py migrate
 $ python manage.py createsuperuser (user=admin email=ad@min.com pass=admin)
 $ python manage.py runserver
 
+## dev
+
 $ python manage.py startapp package_name
+$ pip freeze --local > requirements.txt

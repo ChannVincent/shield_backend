@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "user.apps.UserConfig",
     "posts.apps.PostsConfig",
     "security_data.apps.SecurityDataConfig",
     "django.contrib.admin",
@@ -132,3 +133,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Custom user 
+
+AUTH_USER_MODEL = 'user.CustomUser'
