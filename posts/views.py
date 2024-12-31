@@ -54,9 +54,6 @@ def create_post(request):
 # create automatic post from security data
 def auto_post_security(commune_id):
     commune = Commune.objects.get(pk=commune_id)
-    saved_posts_count = Post.objects.filter(commune_id=commune_id).count()
-    if saved_posts_count > 0:
-        return
     
     aggression_class_list = [
         ("Usage de stupéfiants", "#f80d09"), 
@@ -68,10 +65,12 @@ def auto_post_security(commune_id):
     posts = []
     for aggression in aggression_class_list:
         aggression_class = aggression[0]
+        post_exist = Post.objects.filter(commune_id=commune_id, type=aggression_class).first()
+        if post_exist:
+            continue
         color = aggression[1]
         title = aggression_class + " à " + commune.name_full
         securite_records = Securite.objects.filter(commune_id=commune_id, agression_class=aggression_class)
-        text = aggression_class + " - " + securite_records[0].aggression_unity
         # Convert to simplified JSON format
         simplified_securite_data = [
             {
@@ -92,7 +91,7 @@ def auto_post_security(commune_id):
             text=None,
             color=color,
             json_data=securite_json,
-            type="security_charts"
+            type=aggression_class,
         )
         posts.append(new_post)
 
