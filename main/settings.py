@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'rest_framework_simplejwt',
     "user.apps.UserConfig",
     "posts.apps.PostsConfig",
     "security_data.apps.SecurityDataConfig",
@@ -41,8 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +80,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", # Frontend origin
     "http://127.0.0.1:5173", # Alternative localhost address
 ]
+
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "x-requested-with",
+    "accept",
+    "origin",
+    "user-agent",
+    "cache-control",
+    "referer",
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -144,7 +157,7 @@ AUTH_USER_MODEL = 'user.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',

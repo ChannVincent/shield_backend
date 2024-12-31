@@ -6,37 +6,46 @@ from security_data.models import *
 import json
 from django.core import serializers
 import wikipediaapi
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 
 # View to get all posts by commune : http://localhost:8000/posts/?commune_id=0
-@require_http_methods(["GET"])
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_all_posts(request):
-    commune_id = request.GET.get('commune_id')
+    user = request.user
+    commune_id = user.commune.pk
+
     if not commune_id:
         return JsonResponse({'error': 'commune_id is required'}, status=400)
+    
     try:
+        # Automate posts and retrieve data
         auto_post_general_info(commune_id=commune_id)
         auto_post_security(commune_id=commune_id)
         posts = Post.objects.filter(commune_id=commune_id).order_by('-id').values()
-        return JsonResponse(list(posts), safe=False) 
+        return JsonResponse(list(posts), safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
     
 
 # View to create a new post : http://localhost:8000/posts/create
-@csrf_exempt  # Disable CSRF for this endpoint
-@require_http_methods(["POST"])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_post(request):
     try:
-        # Ensure the request is multipart/form-data
+        user = request.user
         commune_id = request.POST.get('commune')
-        title = request.POST.get('title')
+        title = user.username
         text = request.POST.get('text')
-        json_data = request.POST.get('json_data')  # JSON as a string
+        json_data = request.POST.get('json_data') 
         image = request.FILES.get('image')  # Handle the uploaded image
 
         # Create the post
         new_post = Post.objects.create(
+            user=user,
             commune_id=commune_id,
             title=title,
             text=text,
