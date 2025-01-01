@@ -37,7 +37,7 @@ def get_all_posts(request):
 def create_post(request):
     try:
         user = request.user
-        commune_id = request.POST.get('commune')
+        commune_id = request.POST.get('commune') # or get commune from user ?
         title = user.username
         text = request.POST.get('text')
         json_data = request.POST.get('json_data') 
