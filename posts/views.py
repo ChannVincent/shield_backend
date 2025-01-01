@@ -9,26 +9,37 @@ import wikipediaapi
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 
 # View to get all posts by commune : http://localhost:8000/posts/?commune_id=0
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_posts(request):
+    """
+    API view to return all posts for the authenticated user's commune.
+    Each post includes the number of comments.
+    """
     user = request.user
     commune_id = user.commune.pk
 
     if not commune_id:
         return JsonResponse({'error': 'commune_id is required'}, status=400)
-    
+
     try:
         # Automate posts and retrieve data
         auto_post_general_info(commune_id=commune_id)
         auto_post_security(commune_id=commune_id)
-        # Retrieve posts with related user data
-        posts = Post.objects.filter(commune_id=commune_id).select_related('user').order_by('-id')
-        formatted_posts = [
-            {
+
+        # Retrieve posts with related user and comment data
+        posts = Post.objects.filter(commune_id=commune_id).prefetch_related(
+            'user',  # Fetch the post creator user
+            'likes'  # Fetch users who liked the post
+        ).annotate(comment_count=Count('comments')).order_by('-id')
+
+        formatted_posts = []
+        for post in posts:
+            post_data = {
                 'id': post.pk,
                 'commune_id': post.commune_id,
                 'title': post.title,
@@ -41,9 +52,11 @@ def get_all_posts(request):
                 'user_image': post.user.image.url if post.user and post.user.image else None,
                 'like_count': post.likes.count(),
                 'is_liked': request.user in post.likes.all(),
+                'comment_count': post.comment_count
             }
-            for post in posts
-        ]
+
+            formatted_posts.append(post_data)
+
         return JsonResponse(formatted_posts, safe=False)
 
     except Exception as e:
