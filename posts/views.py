@@ -54,7 +54,6 @@ def create_post(request):
     try:
         user = request.user
         commune_id = request.POST.get('commune') # or get commune from user ?
-        title = user.username
         text = request.POST.get('text')
         json_data = request.POST.get('json_data') 
         image = request.FILES.get('image')  # Handle the uploaded image
@@ -63,7 +62,7 @@ def create_post(request):
         new_post = Post.objects.create(
             user=user,
             commune_id=commune_id,
-            title=title,
+            title=None,
             text=text,
             json_data=json_data,
             image=image
