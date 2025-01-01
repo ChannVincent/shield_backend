@@ -7,8 +7,6 @@ class CustomUser(AbstractUser):
     class Roles(models.TextChoices):
         ADMIN = 'ADMIN', 'Administrator'
         MODERATOR = 'MODERATOR', 'Moderator'
-        USER_LVL_5 = 'USER LVL 5', 'User level 5'
-        USER_LVL_4 = 'USER LVL 4', 'User level 4'
         USER_LVL_3 = 'USER LVL 3', 'User level 3'
         USER_LVL_2 = 'USER LVL 2', 'User level 2'
         USER_LVL_1 = 'USER LVL 1', 'User level 1'
@@ -21,3 +19,4 @@ class CustomUser(AbstractUser):
         choices=Roles.choices,
         default=Roles.USER_LVL_1,
     )
+    image = models.ImageField(null=True, default=None, blank=True)

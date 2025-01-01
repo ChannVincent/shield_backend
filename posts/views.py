@@ -24,8 +24,24 @@ def get_all_posts(request):
         # Automate posts and retrieve data
         auto_post_general_info(commune_id=commune_id)
         auto_post_security(commune_id=commune_id)
-        posts = Post.objects.filter(commune_id=commune_id).order_by('-id').values()
-        return JsonResponse(list(posts), safe=False)
+        # Retrieve posts with related user data
+        posts = Post.objects.filter(commune_id=commune_id).select_related('user').order_by('-id')
+        formatted_posts = [
+            {
+                'commune_id': post.commune_id,
+                'title': post.title,
+                'text': post.text,
+                'type': post.type,
+                'image': post.image.url if post.image else None,
+                'color': post.color,
+                'json_data': post.json_data,
+                'user_username': post.user.username if post.user else None,
+                'user_image': post.user.image.url if post.user and post.user.image else None,
+            }
+            for post in posts
+        ]
+        return JsonResponse(formatted_posts, safe=False)
+
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
