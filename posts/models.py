@@ -13,3 +13,4 @@ class Post(models.Model):
     color = models.CharField(max_length=50, null=True, default=None, blank=True)
     # video = video upload
     json_data = models.JSONField(null=True, default=None, blank=True)
+    likes = models.ManyToManyField(CustomUser, related_name="liked_posts", blank=True)

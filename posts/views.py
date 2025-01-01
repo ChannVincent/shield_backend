@@ -8,6 +8,7 @@ from django.core import serializers
 import wikipediaapi
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 
 # View to get all posts by commune : http://localhost:8000/posts/?commune_id=0
@@ -28,6 +29,7 @@ def get_all_posts(request):
         posts = Post.objects.filter(commune_id=commune_id).select_related('user').order_by('-id')
         formatted_posts = [
             {
+                'id': post.pk,
                 'commune_id': post.commune_id,
                 'title': post.title,
                 'text': post.text,
@@ -37,6 +39,8 @@ def get_all_posts(request):
                 'json_data': post.json_data,
                 'user_username': post.user.username if post.user else None,
                 'user_image': post.user.image.url if post.user and post.user.image else None,
+                'like_count': post.likes.count(),
+                'is_liked': request.user in post.likes.all(),
             }
             for post in posts
         ]
@@ -73,6 +77,28 @@ def create_post(request):
     except Exception as e:
         # Handle errors
         return JsonResponse({'error': str(e)}, status=400)
+
+
+# View to like or unlike post
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_like(request, post_id):
+    user = request.user
+    post = get_object_or_404(Post, pk=post_id)
+
+    # Check if the user already liked the post
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)  # Unlike the post
+        liked = False
+    else:
+        post.likes.add(user)  # Like the post
+        liked = True
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': post.likes.count(),
+    })
+
 
 
 # create automatic post from security data
