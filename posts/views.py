@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Post
+from .models import *
 from security_data.models import *
 import json
 from django.core import serializers
@@ -79,6 +79,7 @@ def create_post(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
+
 # View to like or unlike post
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -101,7 +102,32 @@ def toggle_like(request, post_id):
 
 
 
-# create automatic post from security data
+# View to add a comment to a specific post.
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def post_comment(request, post_id):
+    user = request.user
+    post = get_object_or_404(Post, pk=post_id)
+
+    # Extract the comment text from the request
+    text = request.data.get('text', '').strip()
+    if not text:
+        return JsonResponse({'error': 'Comment text cannot be empty.'}, status=400)
+
+    # Create the comment
+    comment = Comment.objects.create(user=user, post=post, text=text)
+
+    return JsonResponse({
+        'id': comment.id,
+        'user': comment.user.username,
+        'text': comment.text,
+        'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        'updated_at': comment.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+    }, status=201)
+
+
+
+# Create automatic post from security data
 def auto_post_security(commune_id):
     commune = Commune.objects.get(pk=commune_id)
     
@@ -148,6 +174,8 @@ def auto_post_security(commune_id):
     return posts
 
 
+
+# Create automatic post from wiki
 def auto_post_general_info(commune_id):
     commune = Commune.objects.get(pk=commune_id)
     wiki_api = wikipediaapi.Wikipedia('shield (ad@min.com)', 'fr')
