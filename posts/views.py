@@ -140,6 +140,29 @@ def post_comment(request, post_id):
 
 
 
+# View to get all comments for a specific post
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_comments(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    comments = Comment.objects.filter(post=post).order_by('created_at')
+
+    # Serialize the comments
+    comments_data = [
+        {
+            'id': comment.id,
+            'user': comment.user.username,
+            'text': comment.text,
+            'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'updated_at': comment.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+        }
+        for comment in comments
+    ]
+
+    return JsonResponse({'comments': comments_data}, status=200)
+
+
+
 # Create automatic post from security data
 def auto_post_security(commune_id):
     commune = Commune.objects.get(pk=commune_id)
