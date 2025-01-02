@@ -153,6 +153,8 @@ def get_comments(request, post_id):
         {
             'id': comment.id,
             'user': comment.user.username,
+            'user_id': comment.user.pk,
+            'user_rank': comment.user.role,
             'user_image': comment.user.image.url if comment.user.image else None,
             'from_me': comment.user.pk == user.pk,
             'text': comment.text,

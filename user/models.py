@@ -5,11 +5,12 @@ from security_data.models import Commune
 
 class CustomUser(AbstractUser):
     class Roles(models.TextChoices):
-        ADMIN = 'ADMIN', 'Administrator'
-        MODERATOR = 'MODERATOR', 'Moderator'
-        USER_LVL_3 = 'USER LVL 3', 'User level 3'
-        USER_LVL_2 = 'USER LVL 2', 'User level 2'
-        USER_LVL_1 = 'USER LVL 1', 'User level 1'
+        ADMIN = "100"
+        DEVELOPER = "99"
+        MODERATOR = "98"
+        USER_LVL_3 = "3"
+        USER_LVL_2 = "2"
+        USER_LVL_1 = "1"
         
     phone_number = models.CharField(max_length=15, blank=True, null=True, default=None)
     address = models.CharField(max_length=200, blank=True, null=True, default=None)
