@@ -144,6 +144,7 @@ def post_comment(request, post_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_comments(request, post_id):
+    user = request.user
     post = get_object_or_404(Post, pk=post_id)
     comments = Comment.objects.filter(post=post).order_by('created_at')
 
@@ -152,6 +153,8 @@ def get_comments(request, post_id):
         {
             'id': comment.id,
             'user': comment.user.username,
+            'user_image': comment.user.image.url if comment.user.image else None,
+            'from_me': comment.user.pk == user.pk,
             'text': comment.text,
             'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'updated_at': comment.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
