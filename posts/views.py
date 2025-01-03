@@ -50,6 +50,8 @@ def get_all_posts(request):
                 'json_data': post.json_data,
                 'user_username': post.user.username if post.user else None,
                 'user_image': post.user.image.url if post.user and post.user.image else None,
+                'user_id': post.user.pk if post.user else None,
+                'user_rank': post.user.role if post.user else None,
                 'like_count': post.likes.count(),
                 'is_liked': request.user in post.likes.all(),
                 'comment_count': post.comment_count
@@ -132,7 +134,7 @@ def post_comment(request, post_id):
 
     return JsonResponse({
         'id': comment.id,
-        'user': comment.user.username,
+        'user': comment.user.username if comment.user else None,
         'text': comment.text,
         'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
         'updated_at': comment.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
@@ -152,11 +154,11 @@ def get_comments(request, post_id):
     comments_data = [
         {
             'id': comment.id,
-            'user': comment.user.username,
-            'user_id': comment.user.pk,
-            'user_rank': comment.user.role,
-            'user_image': comment.user.image.url if comment.user.image else None,
-            'from_me': comment.user.pk == user.pk,
+            'user': comment.user.username if comment.user else None,
+            'user_id': comment.user.pk if comment.user else None,
+            'user_rank': comment.user.role if comment.user else None,
+            'user_image': comment.user.image.url if (comment.user and comment.user.image) else None,
+            'from_me': comment.user.pk == user.pk if comment.user else False,
             'text': comment.text,
             'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'updated_at': comment.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
