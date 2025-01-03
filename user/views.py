@@ -36,40 +36,26 @@ class LoginView(APIView):
         }, status=200)
 
 
-class LogoutView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        request.auth.delete()  # Delete the token
-        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)   
-
 
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]  # Allow unauthenticated users
-    
+
     def post(self, request):
-        # Deserialize request data
         serializer = UserRegistrationSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
-                # Save the user and send email validation if applicable
+                # Save the user
                 user = serializer.save()
 
-                # Send email verification (if needed)
-                # Assuming your serializer already handles sending a verification email
+                # Optional: Send email verification (customize as per your app's requirement)
+                if hasattr(serializer, 'send_email_verification'):
+                    serializer.send_email_verification(user)
+
                 return Response({
                     "message": "User created successfully. Please check your email to verify your account."
                 }, status=status.HTTP_201_CREATED)
             except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CheckLoginView(APIView):
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access this
-
-    def get(self, request):
-        return Response({"authenticated": True})
+            return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
