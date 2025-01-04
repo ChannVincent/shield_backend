@@ -72,7 +72,7 @@ def get_all_posts(request):
 def create_post(request):
     try:
         user = request.user
-        commune_id = request.POST.get('commune') # or get commune from user ?
+        commune_id = request.user.commune.pk
         text = request.POST.get('text')
         json_data = request.POST.get('json_data') 
         image = request.FILES.get('image')  # Handle the uploaded image
