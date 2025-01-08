@@ -9,6 +9,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from .serializers import UserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
+from .models import CustomUser
+from .serializers import CustomUserSerializer
 
 
 class LoginView(APIView):
@@ -59,3 +62,19 @@ class RegisterUserView(APIView):
                 return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class GetUserView(APIView):
+    permission_classes = [IsAuthenticated]  # Require authentication
+
+    def get(self, request, user_id=None):
+        if user_id:
+            # Retrieve a specific user by ID
+            user = get_object_or_404(CustomUser, id=user_id)
+        else:
+            # Return the currently authenticated user's details
+            user = request.user
+
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data, status=200)
