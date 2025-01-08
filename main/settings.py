@@ -7,16 +7,21 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Read .env file and populate os.environ
+env_file = BASE_DIR / ".env"
+if env_file.exists():
+    with open(env_file) as f:
+        for line in f:
+            # Remove whitespace and comments
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            # Split into key and value
+            key, value = line.split("=", 1)
+            os.environ[key] = value
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-3e(+j(ce%#nk#e^kpo*n4tui7f$zd2g%c!$+ug9zap@7s%u=s0")
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
-
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(" ")
 
 # Application definition
