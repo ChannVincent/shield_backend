@@ -2,7 +2,6 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import os
-import cloudinary
 import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +22,7 @@ if env_file.exists():
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-3e(+j(ce%#nk#e^kpo*n4tui7f$zd2g%c!$+ug9zap@7s%u=s0")
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(" ")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1").split(" ")
 
 # Application definition
 
@@ -39,9 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
-    'cloudinary',
     'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
