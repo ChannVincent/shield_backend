@@ -2,7 +2,8 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import os
-
+import cloudinary
+import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -191,3 +194,12 @@ FRONTEND_URL = 'http://localhost:5173/'
 # EMAIL_HOST_USER = 'your_email@example.com'
 # EMAIL_HOST_PASSWORD = 'your_email_password'
 # DEFAULT_FROM_EMAIL = 'no-reply@example.com'
+
+# Cloudinary stuff
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get("CLOUDINARY_NAME", default=""),
+    'API_KEY': os.environ.get("CLOUDINARY_API_PUBLIC", default=""),
+    'API_SECRET': os.environ.get("CLOUDINARY_API_SECRET", default=""),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
