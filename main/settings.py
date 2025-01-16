@@ -95,7 +95,7 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = None
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -195,7 +195,7 @@ FRONTEND_URL = 'http://localhost:5173/'
 # EMAIL_HOST_PASSWORD = 'your_email_password'
 # DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 
-# Cloudinary stuff
+# Image cloud storage
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get("CLOUDINARY_NAME", default=""),
     'API_KEY': os.environ.get("CLOUDINARY_API_PUBLIC", default=""),
