@@ -201,10 +201,9 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.environ.get("CLOUDINARY_API_PUBLIC", default=""),
     'API_SECRET': os.environ.get("CLOUDINARY_API_SECRET", default=""),
 }
-
+CLOUDINARY = {
+    'cloud_name': os.getenv('CLOUDINARY_CLOUD_NAME', default=""),
+    'api_key': os.getenv('CLOUDINARY_API_KEY', default=""),
+    'api_secret': os.getenv('CLOUDINARY_API_SECRET', default="")
+}
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# DEBUG
-print("CLOUDINARY_NAME:", os.environ.get("CLOUDINARY_NAME"))
-print("CLOUDINARY_API_PUBLIC:", os.environ.get("CLOUDINARY_API_PUBLIC"))
-print("CLOUDINARY_API_SECRET:", os.environ.get("CLOUDINARY_API_SECRET"))
