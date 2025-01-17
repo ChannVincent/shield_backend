@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import os
-import cloudinary_storage
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,20 +27,21 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1").split(" "
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
-    'rest_framework_simplejwt',
-    "user.apps.UserConfig",
-    "posts.apps.PostsConfig",
-    "security_data.apps.SecurityDataConfig",
     "django.contrib.admin",
     "django.contrib.auth",
-    "corsheaders",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
+    "corsheaders",
+    'rest_framework',
+    'rest_framework_simplejwt',
+    
+    "user.apps.UserConfig",
+    "posts.apps.PostsConfig",
+    "security_data.apps.SecurityDataConfig",
 ]
 
 MIDDLEWARE = [
@@ -92,9 +93,6 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Database
@@ -195,15 +193,14 @@ FRONTEND_URL = 'http://localhost:5173/'
 # EMAIL_HOST_PASSWORD = 'your_email_password'
 # DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 
-# Image cloud storage
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get("CLOUDINARY_NAME", default=""),
-    'API_KEY': os.environ.get("CLOUDINARY_API_PUBLIC", default=""),
-    'API_SECRET': os.environ.get("CLOUDINARY_API_SECRET", default=""),
-}
-CLOUDINARY = {
-    'cloud_name': os.getenv('CLOUDINARY_CLOUD_NAME', default=""),
-    'api_key': os.getenv('CLOUDINARY_API_KEY', default=""),
-    'api_secret': os.getenv('CLOUDINARY_API_SECRET', default="")
-}
+# Image cloud storage : cloudinary
+
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
+    , api_key = os.environ.get('CLOUDINARY_API_KEY')
+    , api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+)
+
+MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
