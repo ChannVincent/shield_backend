@@ -203,3 +203,8 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# DEBUG
+print("CLOUDINARY_NAME:", os.environ.get("CLOUDINARY_NAME"))
+print("CLOUDINARY_API_PUBLIC:", os.environ.get("CLOUDINARY_API_PUBLIC"))
+print("CLOUDINARY_API_SECRET:", os.environ.get("CLOUDINARY_API_SECRET"))

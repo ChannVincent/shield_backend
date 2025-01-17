@@ -15,10 +15,10 @@ class Post(models.Model):
         null=True, 
         blank=True, 
         folder='posts',
-        transformation={
-            'width': 500,
-            'crop': 'scale',  # Maintains aspect ratio
-        }
+        # transformation={
+        #     'width': 500,
+        #     'crop': 'scale',  # Maintains aspect ratio
+        # }
     )
     color = models.CharField(max_length=50, null=True, default=None, blank=True)
     # video = video upload

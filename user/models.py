@@ -31,10 +31,10 @@ class CustomUser(AbstractUser):
         null=True, 
         blank=True, 
         folder='user_image',
-        transformation={
-            'width': 300,
-            'height': 300,
-            'crop': 'fill',  # Options: 'fill', 'fit', 'scale', 'thumb', etc.
-            'gravity': 'auto'  # Ensures the most important part of the image is retained
-        }
+        # transformation={
+        #     'width': 300,
+        #     'height': 300,
+        #     'crop': 'fill',  # Options: 'fill', 'fit', 'scale', 'thumb', etc.
+        #     'gravity': 'auto'  # Ensures the most important part of the image is retained
+        # }
     )
