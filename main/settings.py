@@ -1,25 +1,14 @@
+import cloudinary
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import os
-import cloudinary
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Read .env file and populate os.environ
-env_file = BASE_DIR / ".env"
-if env_file.exists():
-    with open(env_file) as f:
-        for line in f:
-            # Remove whitespace and comments
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            # Split into key and value
-            key, value = line.split("=", 1)
-            os.environ[key] = value
-
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-3e(+j(ce%#nk#e^kpo*n4tui7f$zd2g%c!$+ug9zap@7s%u=s0")
 DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1").split(" ")
@@ -35,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
-    "corsheaders",
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     
@@ -141,17 +130,13 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Image cloud storage : cloudinary
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = "/static/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" # to enable compression and caching
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+cloudinary.config(
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
+    , api_key = os.environ.get('CLOUDINARY_API_KEY')
+    , api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+)
 
 # Custom user 
 
@@ -184,23 +169,20 @@ SIMPLE_JWT = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 FRONTEND_URL = 'http://localhost:5173/'
-# TODO IN PROD
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.example.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your_email@example.com'
-# EMAIL_HOST_PASSWORD = 'your_email_password'
-# DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 
-# Image cloud storage : cloudinary
-
-cloudinary.config(
-    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
-    , api_key = os.environ.get('CLOUDINARY_API_KEY')
-    , api_secret = os.environ.get('CLOUDINARY_API_SECRET')
-)
+# Media
 
 MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -3,7 +3,7 @@ certifi==2024.12.14
 charset-normalizer==3.4.1
 cloudinary==1.42.1
 dj-database-url==2.3.0
-Django==5.1.4
+Django==4.2.17
 django-cloudinary-storage==0.3.0
 django-cors-headers==4.6.0
 django-environ==0.11.2
@@ -15,6 +15,7 @@ packaging==24.2
 pillow==11.0.0
 psycopg2==2.9.10
 PyJWT==2.10.1
+python-dotenv==1.0.1
 requests==2.32.3
 six==1.17.0
 sqlparse==0.5.3
