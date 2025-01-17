@@ -1,7 +1,6 @@
 from django.db import models
 from user.models import CustomUser
 from security_data.models import Commune
-from cloudinary.models import CloudinaryField
 
 
 class Post(models.Model):
@@ -10,18 +9,8 @@ class Post(models.Model):
     title = models.CharField(max_length=200, null=True, default=None, blank=True)
     text = models.TextField(null=True, default=None, blank=True)
     type = models.CharField(max_length=50, null=True, default=None, blank=True)
-    image = CloudinaryField(
-        'image', 
-        null=True, 
-        blank=True, 
-        folder='posts',
-        # transformation={
-        #     'width': 500,
-        #     'crop': 'scale',  # Maintains aspect ratio
-        # }
-    )
+    image = models.ImageField(upload_to='media/', null=True, default=None, blank=True)
     color = models.CharField(max_length=50, null=True, default=None, blank=True)
-    # video = video upload
     json_data = models.JSONField(null=True, default=None, blank=True)
     likes = models.ManyToManyField(CustomUser, related_name="liked_posts", blank=True)
 

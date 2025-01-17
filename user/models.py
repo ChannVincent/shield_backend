@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from security_data.models import Commune
-from cloudinary.models import CloudinaryField
 
 
 class CustomUser(AbstractUser):
@@ -26,15 +25,4 @@ class CustomUser(AbstractUser):
         choices=Roles.choices,
         default=Roles.USER_LVL_1,
     )
-    image = CloudinaryField(
-        'image', 
-        null=True, 
-        blank=True, 
-        folder='user_image',
-        # transformation={
-        #     'width': 300,
-        #     'height': 300,
-        #     'crop': 'fill',  # Options: 'fill', 'fit', 'scale', 'thumb', etc.
-        #     'gravity': 'auto'  # Ensures the most important part of the image is retained
-        # }
-    )
+    image = models.ImageField(upload_to='media/', null=True, default=None, blank=True)
