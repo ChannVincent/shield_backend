@@ -2,6 +2,7 @@ from django.db import models
 from user.models import CustomUser
 from security_data.models import Commune
 from cloudinary.models import CloudinaryField
+from cloudinary.uploader import destroy
 
 
 class Post(models.Model):
@@ -24,6 +25,14 @@ class Post(models.Model):
     json_data = models.JSONField(null=True, default=None, blank=True)
     likes = models.ManyToManyField(CustomUser, related_name="liked_posts", blank=True)
 
+    # on_save : delete old image
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_image = CustomUser.objects.filter(pk=self.pk).first().image
+            if old_image and str(old_image) != str(self.image):
+                destroy(old_image.public_id)
+        super().save(*args, **kwargs)
+        
 
 class Comment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

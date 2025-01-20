@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from security_data.models import Commune
 from cloudinary.models import CloudinaryField
+from cloudinary.uploader import destroy
 
 
 class CustomUser(AbstractUser):
@@ -38,3 +39,11 @@ class CustomUser(AbstractUser):
             'gravity': 'auto',  # Ensures the most important part of the image is retained
         }
     )
+    
+    # on_save : delete old image
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_image = CustomUser.objects.filter(pk=self.pk).first().image
+            if old_image and str(old_image) != str(self.image):
+                destroy(old_image.public_id)
+        super().save(*args, **kwargs)
