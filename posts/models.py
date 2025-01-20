@@ -28,7 +28,7 @@ class Post(models.Model):
     # on_save : delete old image
     def save(self, *args, **kwargs):
         if self.pk:
-            old_image = CustomUser.objects.filter(pk=self.pk).first().image
+            old_image = Post.objects.filter(pk=self.pk).first().image
             if old_image and str(old_image) != str(self.image):
                 destroy(old_image.public_id)
         super().save(*args, **kwargs)
