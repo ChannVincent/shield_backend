@@ -35,6 +35,7 @@ class CustomUser(AbstractUser):
             'width': 300,
             'height': 300,
             'crop': 'fill',  # Options: 'fill', 'fit', 'scale', 'thumb', etc.
-            'gravity': 'auto'  # Ensures the most important part of the image is retained
+            'gravity': 'auto',  # Ensures the most important part of the image is retained
+            'fetch_format': 'png',
         }
     )
