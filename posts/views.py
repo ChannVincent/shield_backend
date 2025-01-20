@@ -1,10 +1,7 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
 from .models import *
 from security_data.models import *
 import json
-from django.core import serializers
 import wikipediaapi
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -27,15 +24,18 @@ def get_all_posts(request):
         return JsonResponse({'error': 'commune_id is required'}, status=400)
 
     try:
-        # Automate posts and retrieve data
+        # Automate posts creation if empty
         auto_post_general_info(commune_id=commune_id)
         auto_post_security(commune_id=commune_id)
 
         # Retrieve posts with related user and comment data
-        posts = Post.objects.filter(commune_id=commune_id).prefetch_related(
-            'user',  # Fetch the post creator user
-            'likes'  # Fetch users who liked the post
-        ).annotate(comment_count=Count('comments')).order_by('-id')
+        posts = (
+            Post.objects.filter(commune_id=commune_id)
+            .select_related('user', 'commune')  # Optimize foreign key fetching
+            .prefetch_related('likes')         # Optimize ManyToMany fetching
+            .annotate(comment_count=Count('comments'))  # Add a comment count
+            .order_by('-id')  # Order posts by newest first
+        )
 
         formatted_posts = []
         for post in posts:
