@@ -36,6 +36,7 @@ class LoginView(APIView):
             'user_id': user.id,
             'username': user.username,
             'role': getattr(user, 'role', None),
+            'commune': user.commune.name_full,
         }, status=200)
 
 
