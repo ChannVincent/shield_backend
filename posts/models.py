@@ -18,7 +18,6 @@ class Post(models.Model):
         transformation={
             'width': 500,
             'crop': 'scale',  # Maintains aspect ratio
-            'fetch_format': 'png',
         }
     )
     color = models.CharField(max_length=50, null=True, default=None, blank=True)
